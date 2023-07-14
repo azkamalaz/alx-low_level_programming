@@ -2,11 +2,11 @@
 #include <time.h>
 #include <stdio.h>
 /**
- *main - entry point
+ * main - entry point
  *
- *description: false or true validation
+ * description: false or true validation
  *
- *return: 0 (success)
+ * return: 0 (success)
 */
 
 int main(void)
@@ -21,6 +21,6 @@ int main(void)
 		printf("%d is zero\n", n);
 	else
 	{
-		printf("%d is positive\n", n); }
+		printf("%d is negative\n", n); }
 	return (0);
 }
