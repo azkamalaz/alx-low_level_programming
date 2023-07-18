@@ -1,4 +1,4 @@
-#include <main.h>
+#include "main.h"
 #include <stdio.h>
 /**
  * print_times_table - Prints the times table for a given number from 0 to 10.
