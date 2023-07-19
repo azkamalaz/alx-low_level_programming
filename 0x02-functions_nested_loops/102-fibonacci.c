@@ -24,7 +24,7 @@ int main(void)
                 if (count == 49)
 			printf("\n");
 		else
-			Printf(", ");
+			printf(", ");
 	}
 	return (0);
 }
