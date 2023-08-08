@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 /**
  * _strdup - dynamically allocating memory to create a copy of the input string
  *
@@ -17,7 +18,10 @@ char *_strdup(char *str)
 
 	if (duplicate != NULL)
 	{
-		strcpy(duplicate, str);
+		errno = ENOMEM;
+		return (NULL);
 	}
+
+	strcpy(duplicate, str);
 	return (duplicate);
 }
