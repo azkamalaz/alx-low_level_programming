@@ -1,23 +1,4 @@
-le (s[i] != '\0')
-	{
-				i++;
-					}
-	return (i);
-	}
-
-/**
-   * errors - handles errors for main
-    */
-void errors(void)
-{
-		printf("Error\n");
-			exit(98);
-}
-
-/**
-   * main - multiplies two positive numbers
-    * @argc: number of arguments
-     * @argv: array of argum#include "main.h"
+#include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -50,7 +31,26 @@ int is_digit(char *s)
  */
 int _strlen(char *s)
 {
-	int ients
+	int i = 0;
+
+	while (s[i] != '\0')
+	{
+		i++;
+	}
+	return (i);
+}
+/**
+ * errors - handles errors for main
+ */
+void errors(void)
+{
+	printf("Error\n");
+	exit(98);
+}
+/**
+ * main - multiplies two positive numbers
+ * @argc: number of arguments
+ * @argv: array of arguments
  *
  * Return: always 0 (Success)
  */
