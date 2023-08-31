@@ -14,22 +14,23 @@ unsigned int binary_to_uint(const char *b)
 	{
 		return (0);
 	}
-
-	for (i = 0; b[i] != '\0'; i++)
+	else
 	{
-		if (b[i] == '0')
+		for (i = 0; b[i] != '\0'; i++)
 		{
-			decimal = decimal * 2;
-		}
+			if (b[i] == '0')
+			{
+				decimal = decimal * 2;
+			}
 
-		else if (b[i] == '1')
-		{
-			decimal = decimal * 2 + 1;
-		}
-		else
-		{
-			return (0);
-		}
+			else if (b[i] == '1')
+			{
+				decimal = decimal * 2 + 1;
+			}
+			else
+			{
+				return (0);
+			}
 
-		return (decimal);
+			return (decimal);
 }
