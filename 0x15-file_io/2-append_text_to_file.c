@@ -8,24 +8,32 @@
 int append_text_to_file(const char *filename, char *text_content)
 {
 	int result;
-	FILE *file;
+	int file;
 
 	if (filename == NULL)
 	{
 		return (-1);
 	}
-	if (text_content == NUL)
+
+	if (text_content == NULL)
 	{
 		return (1);
 	}
-	file = fopen(filename, "a");
-	if (file == NULL)
+
+	file = open(filename, O_RDWR | O_APPEND, 0666);
+	if (file == -1)
 	{
 		return (-1);
 	}
 
-	result = fprintf(file, "%s", text_content);
-	fclose(file);
+	result = dprintf(file, "%s", text_content);
+	if (result < 0)
+	{
+		close(file);
+		return (-1);
+	}
 
-	return ((result < 0) ? -1 : 1);
+	close(file);
+
+	return (1);
 }
