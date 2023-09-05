@@ -1,117 +1,79 @@
 #include "main.h"
 /**
- * Print the information contained in the ELF header.
- * @header: Pointer to the ELF header structure.
+ * create_buffer - Allocates a buffer for file operations.
+ * @file: The name of the file for error messages.
+ * Return: A pointer to the allocated buffer.
  */
-void print_elf_header(const Elf64_Ehdr *header)
+char *create_buffer2(const char *file)
 {
-	int i;
+	char *buffer = malloc(sizeof(char) * 1024);
 
-
-	printf("ELF Header:\n");
-	printf("  Magic:   ");
-	for (i = 0; i < EI_NIDENT; i++)
+	if (buffer == NULL)
 	{
-		printf("%02x ", header->e_ident[i]);
-	}
-	printf("\n");
-
-	printf("  Class:                             ");
-	switch (header->e_ident[EI_CLASS])
-	{
-		case ELFCLASS32:
-			printf("ELF32\n");
-			break;
-		case ELFCLASS64:
-			printf("ELF64\n");
-			break;
-		default:
-			printf("<unknown: %d>\n", header->e_ident[EI_CLASS]);
+		fprintf(stderr, "Error: Can't allocate memory for %s\n", file);
+		exit(EXIT_FAILURE);
 	}
 
-	printf("  Data:                              ");
-	switch (header->e_ident[EI_DATA])
-	{
-		case ELFDATA2LSB:
-			printf("2's complement, little endian\n");
-			break;
-		case ELFDATA2MSB:
-			printf("2's complement, big endian\n");
-			break;
-		default:
-			printf("<unknown: %d>\n", header->e_ident[EI_DATA]);
-	}
-
-	printf("  Version:                           %d (current)\n", header->e_ident[EI_VERSION]);
-	printf("  OS/ABI:                            %s\n", header->e_ident[EI_OSABI] == ELFOSABI_SYSV ? "UNIX - System V" : "<unknown>");
-	printf("  ABI Version:                       %d\n", header->e_ident[EI_ABIVERSION]);
-	printf("  Type:                              ");
-	switch (header->e_type)
-	{
-		case ET_NONE:
-			printf("NONE (Unknown)\n");
-			break;
-		case ET_REL:
-			printf("REL (Relocatable file)\n");
-			break;
-		case ET_EXEC:
-			printf("EXEC (Executable file)\n");
-			break;
-		case ET_DYN:
-			printf("DYN (Shared object file)\n");
-			break;
-		case ET_CORE:
-			printf("CORE (Core file)\n");
-			break;
-		default:
-			printf("<unknown: %d>\n", header->e_type);
-	}
-
-	printf("  Entry point address:               0x%lx\n", (unsigned long)header->e_entry);
+	return (buffer);
 }
 /**
- * Main function to display ELF header information.
- * @argc: Number of command-line arguments.
- * @argv: Array of command-line argument strings.
- * Return - Returns 0 on success or 98 on error.
+ * close_file - Closes a file descriptor and handles errors.
+ * @fd: The file descriptor to close.
+ */
+void close_file(int fd)
+{
+	if (close(fd) == -1)
+	{
+		fprintf(stderr, "Error: Can't close file descriptor %d\n", fd);
+		exit(EXIT_FAILURE);
+	}
+}
+/**
+ * main - Copies the contents of one file to another.
+ * @argc: The number of command-line arguments.
+ * @argv: An array of command-line argument strings.
+ * Return: 0 on success, exit codes for various error conditions.
  */
 int main(int argc, char *argv[])
 {
-	const char *filename;
-	int fd;
-	Elf64_Ehdr header;
+	int src_fd, dest_fd, bytes_read, bytes_written;
+	char *buffer;
 
-
-	if (argc != 2)
+	if (argc != 3)
 	{
-		fprintf(stderr, "Usage: %s elf_filename\n", argv[0]);
-		return (98);
+		fprintf(stderr, "Usage: cp file_from file_to\n");
+		exit(EXIT_FAILURE);
 	}
-
-	filename = argv[1];
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
+	buffer = create_buffer2(argv[2]);
+	src_fd = open(argv[1], O_RDONLY);
+	if (src_fd == -1)
 	{
-		perror("open");
-		return (98);
+		fprintf(stderr, "Error: Can't read from file %s\n", argv[1]);
+		free(buffer);
+		exit(EXIT_FAILURE);
 	}
-
-	if (read(fd, &header, sizeof(header)) != sizeof(header))
+	dest_fd = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
+	if (dest_fd == -1)
 	{
-		perror("read");
-		close(fd);
-		return (98);
+		fprintf(stderr, "Error: Can't create or write to %s\n", argv[2]);
+		free(buffer);
+		close_file(src_fd);
+		exit(EXIT_FAILURE);
 	}
-
-	if (header.e_ident[EI_MAG0] != ELFMAG0 || header.e_ident[EI_MAG1] != ELFMAG1 ||
-		header.e_ident[EI_MAG2] != ELFMAG2 || header.e_ident[EI_MAG3] != ELFMAG3)
+	while ((bytes_read = read(src_fd, buffer, 1024)) > 0)
+	{
+		bytes_written = write(dest_fd, buffer, bytes_read);
+		if (bytes_written == -1)
 		{
-		fprintf(stderr, "%s: Not an ELF file\n", filename);
-		close(fd);
-		return (98);
+			fprintf(stderr, "Error: Can't write to %s\n", argv[2]);
+			free(buffer);
+			close_file(src_fd);
+			close_file(dest_fd);
+			exit(EXIT_FAILURE);
 		}
-
-	print_elf_header(&header);
-	close(fd);
+	}
+	free(buffer);
+	close_file(src_fd);
+	close_file(dest_fd);
 	return (0);
 }
