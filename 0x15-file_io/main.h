@@ -1,6 +1,8 @@
 #ifndef HEADER_FILE
 #define HEADER_FILE
 
+#define BUFFER_SIZE 1024
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
