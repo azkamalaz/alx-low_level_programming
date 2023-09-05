@@ -188,10 +188,10 @@ void print_abi(unsigned char *e_ident)
  * print_type - Prints the type of an ELF header.
  * @e_type: The ELF type.
  * @e_ident: A pointer to an array containing the ELF class.
- */
-void print_type(unsigned int e_type, unsigned char *e_ident)
+char *e_ident)
 {
-	if (e_ident[EI_DATA] == ELFDATA2MSB)
+	if (e_ident[EI_DATA] == ELFDATA2 */
+void print_type(unsigned int e_type, unsigned MSB)
 		e_type >>= 8;
 
 	printf("  Type:                              ");
@@ -270,10 +270,10 @@ int main(int __attribute__((__unused__)) argc, char *argv[])
 	Elf64_Ehdr *header;
 	int o, r;
 
-	o = f(STDERR_FILENO, "Error: Can't read file %s\n", aropen(argv[1], O_RDONLY);
+	o = open(argv[1], O_RDONLY);
 	if (o == -1)
 	{
-		dprintgv[1]);
+		dprintf(STDERR_FILENO, "Error: Can't read file %s\n", argv[1]);
 		exit(98);
 	}
 	header = malloc(sizeof(Elf64_Ehdr));
